@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.5.0</Version>
+    <Authors>Oren Nachman</Authors>
+    <Company>nachmore.com</Company>
+    <Description>A simple library which can be used for basic udpate checking by querying GitHub's release API.</Description>
+    <Copyright>©Oren Nachman 2020</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/nachmore/GitHubReleaseChecker</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nachmore/GitHubReleaseChecker</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>github updates</PackageTags>
+  </PropertyGroup>
+
+</Project>
