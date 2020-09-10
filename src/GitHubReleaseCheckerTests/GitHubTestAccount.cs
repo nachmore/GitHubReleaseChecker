@@ -29,6 +29,9 @@ namespace GitHubReleaseCheckerTests
       { nameof(Tests.TestNullAccount), _testAccounts["null_account"] },
       { nameof(Tests.TestNullRepository), _testAccounts["null_repo"] },
       { nameof(Tests.TestNullRelease), _testAccounts["null_release"] },
+      { nameof(Tests.TestUpdateDetection), _testAccounts["nachmore_latest"] },
+      { nameof(Tests.TestInvalidUpdateDetectionInterval), _testAccounts["nachmore_latest"] },
+      { nameof(Tests.TestNullUpdateDetectionCallback), _testAccounts["nachmore_latest"] },
     };
 
     public string Name { get; private set; }

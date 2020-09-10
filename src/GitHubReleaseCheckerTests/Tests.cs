@@ -1,6 +1,8 @@
 using GitHubReleaseChecker;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GitHubReleaseCheckerTests
@@ -96,7 +98,7 @@ namespace GitHubReleaseCheckerTests
     }
 
     [Test]
-    public async Task TestNullAccount()
+    public void TestNullAccount()
     {
       var account = GitHubTestAccount.Get();
       var checker = new ReleaseChecker(account.Name, account.Repository);
@@ -116,11 +118,11 @@ namespace GitHubReleaseCheckerTests
       Assert.IsNotNull(checker.AccountName);
       Assert.IsNull(checker.Repository);
 
-      Assert.ThrowsAsync<System.Net.Http.HttpRequestException>(() => checker.GetReleaseAsync());
+      Assert.ThrowsAsync<System.ArgumentException>(() => checker.GetReleaseAsync());
     }
 
     [Test]
-    public async Task TestNullRelease()
+    public void TestNullRelease()
     {
       var account = GitHubTestAccount.Get();
       var checker = new ReleaseChecker(account.Name, account.Repository);
@@ -131,5 +133,68 @@ namespace GitHubReleaseCheckerTests
       Assert.ThrowsAsync<System.Net.Http.HttpRequestException>(() => checker.GetReleaseAsync(account.Release));
     }
 
+    [Test]
+    public void TestUpdateDetection()
+    {
+      string versionToCheckFor = "v1";
+
+      var account = GitHubTestAccount.Get();
+      var checker = new ReleaseChecker(account.Name, account.Repository);
+
+      GitHubRelease latestRelease = null;
+
+      checker.MonitorForUpdates(
+        versionToCheckFor,
+        (release) => { latestRelease = release; },
+        System.Threading.Timeout.Infinite
+      );
+
+      var timeToSleep = 5000;
+
+      while (latestRelease == null && timeToSleep > 0)
+      {
+        Thread.Sleep(1000);
+        timeToSleep -= 1000;
+      }
+
+      Assert.IsNotNull(latestRelease);
+      Assert.AreNotEqual(latestRelease.Version, versionToCheckFor);
+    }
+
+    [Test]
+    public void TestInvalidUpdateDetectionInterval()
+    {
+      var account = GitHubTestAccount.Get();
+      var checker = new ReleaseChecker(account.Name, account.Repository);
+
+      GitHubRelease latestRelease = null;
+
+      Assert.Throws<ArgumentException>(() =>
+      {
+        checker.MonitorForUpdates(
+          "v1",
+          (release) => { },
+          0
+        );
+      });
+    }
+
+    [Test]
+    public void TestNullUpdateDetectionCallback()
+    {
+      var account = GitHubTestAccount.Get();
+      var checker = new ReleaseChecker(account.Name, account.Repository);
+
+      GitHubRelease latestRelease = null;
+
+      Assert.Throws<ArgumentException>(() =>
+      {
+        checker.MonitorForUpdates(
+          "v1",
+          null,
+          0
+        );
+      });
+    }
   }
 }
