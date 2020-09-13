@@ -66,6 +66,17 @@ namespace GitHubReleaseChecker
       }
     }
 
+    private GitHubRelease _update;
+    public GitHubRelease Update
+    {
+      get { return _update; }
+      private set
+      {
+        _update = value;
+        NotifyPropertyChanged();
+      }
+    }
+
     public ReleaseChecker(string accountName, string repository)
     {
       AccountName = accountName;
@@ -138,14 +149,21 @@ namespace GitHubReleaseChecker
 
         UpdateUrl = release.HtmlUrl;
         UpdateAvailable = true;
+        Update = release;
       }
       else
       {
         UpdateUrl = null;
         UpdateAvailable = false;
+        Update = null;
       }
 
       LastChecked = DateTime.Now;
+    }
+
+    public void UpdateNow()
+    {
+      Update?.LaunchDownload();
     }
   }
 }

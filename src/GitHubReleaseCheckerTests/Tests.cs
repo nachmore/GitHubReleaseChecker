@@ -9,13 +9,6 @@ namespace GitHubReleaseCheckerTests
 {
   public class Tests
   {
-
-    private Dictionary<string, string> _accounts = new Dictionary<string, string>()
-    {
-      {"nachmore", "AmazonChimeHelper" },
-      {"Studio3T", "robomongo" }
-    };
-
     [SetUp]
     public void Setup()
     {
@@ -74,7 +67,7 @@ namespace GitHubReleaseCheckerTests
       Assert.IsFalse(release.PreRelease);
       Assert.AreEqual(release.Name, "Chime Helper 1.2");
       Assert.AreEqual(release.HtmlUrl, "https://github.com/nachmore/AmazonChimeHelper/releases/tag/v1.2");
-      Assert.AreEqual(release.Assets.Length,  1);
+      Assert.AreEqual(release.Assets.Length, 1);
       Assert.IsNotEmpty(release.ReleaseNotes);
     }
 
@@ -200,6 +193,8 @@ namespace GitHubReleaseCheckerTests
       var checker = new ReleaseChecker(account.Name, account.Repository);
 
       var lastChecked = checker.LastChecked;
+      var originalUpdateUrl = checker.UpdateUrl;
+      var originalUpdate = checker.Update;
 
       Assert.DoesNotThrow(() =>
       {
@@ -217,6 +212,9 @@ namespace GitHubReleaseCheckerTests
 
       Assert.IsTrue(checker.UpdateAvailable);
       Assert.IsNotEmpty(checker.UpdateUrl);
+      Assert.AreNotEqual(checker.UpdateUrl, originalUpdateUrl);
+      Assert.IsNotNull(checker.Update);
+      Assert.AreNotEqual(checker.Update, originalUpdate);
     }
 
   }
