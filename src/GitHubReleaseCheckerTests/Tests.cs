@@ -133,7 +133,7 @@ namespace GitHubReleaseCheckerTests
       Assert.ThrowsAsync<System.Net.Http.HttpRequestException>(() => checker.GetReleaseAsync(account.Release));
     }
 
-    [Test]
+    [Test, Timeout(5000)]
     public void TestUpdateDetection()
     {
       string versionToCheckFor = "v1";
@@ -146,15 +146,12 @@ namespace GitHubReleaseCheckerTests
       checker.MonitorForUpdates(
         versionToCheckFor,
         (release) => { latestRelease = release; },
-        System.Threading.Timeout.Infinite
+        Timeout.Infinite
       );
 
-      var timeToSleep = 5000;
-
-      while (latestRelease == null && timeToSleep > 0)
+      while (latestRelease == null)
       {
-        Thread.Sleep(1000);
-        timeToSleep -= 1000;
+        Thread.Sleep(500);
       }
 
       Assert.IsNotNull(latestRelease);
@@ -173,10 +170,11 @@ namespace GitHubReleaseCheckerTests
       {
         checker.MonitorForUpdates(
           "v1",
-          (release) => { },
+          (release) => { latestRelease = release; },
           0
         );
       });
+      Assert.IsNull(latestRelease);
     }
 
     [Test]
@@ -185,16 +183,41 @@ namespace GitHubReleaseCheckerTests
       var account = GitHubTestAccount.Get();
       var checker = new ReleaseChecker(account.Name, account.Repository);
 
-      GitHubRelease latestRelease = null;
-
-      Assert.Throws<ArgumentException>(() =>
+      Assert.DoesNotThrow(() =>
       {
         checker.MonitorForUpdates(
           "v1",
           null,
-          0
+          Timeout.Infinite
         );
       });
     }
+
+    [Test, Timeout(5000)]
+    public void TestUpdateDetectionProperties()
+    {
+      var account = GitHubTestAccount.Get();
+      var checker = new ReleaseChecker(account.Name, account.Repository);
+
+      var lastChecked = checker.LastChecked;
+
+      Assert.DoesNotThrow(() =>
+      {
+        checker.MonitorForUpdates(
+          "v1",
+          null,
+          Timeout.Infinite
+        );
+      });
+
+      while (lastChecked == checker.LastChecked)
+      {
+        Thread.Sleep(500);
+      }
+
+      Assert.IsTrue(checker.UpdateAvailable);
+      Assert.IsNotEmpty(checker.UpdateUrl);
+    }
+
   }
 }

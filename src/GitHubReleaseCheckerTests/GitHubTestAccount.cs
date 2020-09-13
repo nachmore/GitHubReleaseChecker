@@ -32,6 +32,7 @@ namespace GitHubReleaseCheckerTests
       { nameof(Tests.TestUpdateDetection), _testAccounts["nachmore_latest"] },
       { nameof(Tests.TestInvalidUpdateDetectionInterval), _testAccounts["nachmore_latest"] },
       { nameof(Tests.TestNullUpdateDetectionCallback), _testAccounts["nachmore_latest"] },
+      { nameof(Tests.TestUpdateDetectionProperties), _testAccounts["nachmore_latest"] },
     };
 
     public string Name { get; private set; }
