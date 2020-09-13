@@ -106,7 +106,7 @@ namespace GitHubReleaseChecker
 
     private const int _MIN_UPDATE_CHECK_INTERVAL = 60 * 60 * 1000;
 
-    public void MonitorForUpdates(string currentVersion, OnUpdateDetected updateCallback, int timerIntervalMs = 24 * 60 * 60 * 1000)
+    public void MonitorForUpdates(string currentVersion, OnUpdateDetected updateCallback = null, int timerIntervalMs = 24 * 60 * 60 * 1000)
     {
       if (timerIntervalMs != Timeout.Infinite && timerIntervalMs < _MIN_UPDATE_CHECK_INTERVAL)
         throw new ArgumentException($"{nameof(timerIntervalMs)} ({timerIntervalMs}) must be less than {_MIN_UPDATE_CHECK_INTERVAL}ms in order to avoid throttling limits");
