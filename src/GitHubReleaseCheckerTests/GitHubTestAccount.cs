@@ -16,6 +16,7 @@ namespace GitHubReleaseCheckerTests
       { "nachmore_latest", new GitHubTestAccount() {Name = "nachmore", Repository = "AmazonChimeHelper" } },
       { "nachmore_specific_release", new GitHubTestAccount() {Name = "nachmore", Repository = "AmazonChimeHelper", Release = "23205966" } },
       { "specific_release_multi_asset", new GitHubTestAccount() {Name = "Studio3T", Repository = "robomongo", Release = "30663288" } },
+      { "invalid", new GitHubTestAccount() {Name=")!#)#*!_+@!# !@ #(*@&*!!", Repository="  - --   ", Release="&" } }
     };
 
     private static Dictionary<string, GitHubTestAccount> _testToAccountMatrix = new Dictionary<string, GitHubTestAccount>()
@@ -33,6 +34,7 @@ namespace GitHubReleaseCheckerTests
       { nameof(Tests.TestInvalidUpdateDetectionInterval), _testAccounts["nachmore_latest"] },
       { nameof(Tests.TestNullUpdateDetectionCallback), _testAccounts["nachmore_latest"] },
       { nameof(Tests.TestUpdateDetectionProperties), _testAccounts["nachmore_latest"] },
+      { nameof(Tests.TestUpdateDetectionExceptions), _testAccounts["invalid"] }
     };
 
     public string Name { get; private set; }

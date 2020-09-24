@@ -217,5 +217,27 @@ namespace GitHubReleaseCheckerTests
       Assert.AreNotEqual(checker.Update, originalUpdate);
     }
 
+    [Test, Timeout(5000)]
+    public void TestUpdateDetectionExceptions()
+    {
+      var account = GitHubTestAccount.Get();
+      var checker = new ReleaseChecker(account.Name, account.Repository);
+
+      var thrown = false;
+
+      checker.UnhandledException += (source, e) => 
+      { 
+        thrown = true;
+
+        Assert.IsInstanceOf<System.Net.Http.HttpRequestException>(e);
+      };
+
+      checker.MonitorForUpdates("bing bong", null, Timeout.Infinite);
+
+      while (!thrown)
+        Thread.Sleep(500);
+
+      // if we fall through it means thet test passed (since it didn't timeout)!
+    }
   }
 }

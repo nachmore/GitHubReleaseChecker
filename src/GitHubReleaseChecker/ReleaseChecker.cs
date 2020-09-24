@@ -28,6 +28,10 @@ namespace GitHubReleaseChecker
 
     private readonly HttpClient _httpClient = new HttpClient();
 
+    public delegate void UnhandledReleaseCheckerException(object sender, Exception e);
+
+    public event UnhandledReleaseCheckerException UnhandledException;
+
     public string AccountName { get; set; }
     public string Repository { get; set; }
 
@@ -141,24 +145,32 @@ namespace GitHubReleaseChecker
 
       var args = (CheckForUpdateParams)state;
 
-      var release = await GetReleaseAsync();
-
-      if (args.CurrentVersion != release.Version)
+      try
       {
-        args.Callback?.Invoke(release);
+        var release = await GetReleaseAsync();
 
-        UpdateUrl = release.HtmlUrl;
-        UpdateAvailable = true;
-        Update = release;
-      }
-      else
+        if (args.CurrentVersion != release.Version)
+        {
+          args.Callback?.Invoke(release);
+
+          UpdateUrl = release.HtmlUrl;
+          UpdateAvailable = true;
+          Update = release;
+        }
+        else
+        {
+          UpdateUrl = null;
+          UpdateAvailable = false;
+          Update = null;
+        }
+
+        LastChecked = DateTime.Now;
+      } 
+      catch (Exception e)
       {
-        UpdateUrl = null;
-        UpdateAvailable = false;
-        Update = null;
+        // If the handler is defined, invoke it, otherwise silently swallow these exceptions
+        UnhandledException?.Invoke(this, e);
       }
-
-      LastChecked = DateTime.Now;
     }
 
     public void UpdateNow()
